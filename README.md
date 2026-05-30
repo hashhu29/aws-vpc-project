@@ -11,6 +11,18 @@ Contents:
 - EC2 instances in both subnets
 - Bastion host pattern for private EC2 access
 
+## Architecture
+
+```
+Users
+  └── Internet Gateway
+        └── Public Subnet (AZ A)
+              ├── Bastion EC2
+              └── NAT Gateway
+                    └── Private Subnet (AZ A)
+                          └── Private EC2
+```
+
 ## Prerequisites
 
 - AWS CLI installed and configured
