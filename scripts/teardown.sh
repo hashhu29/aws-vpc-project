@@ -86,37 +86,38 @@ PRIVATE_RT_ASSOC=$(aws ec2 describe-route-tables \
   --query 'RouteTables[0].Associations[0].RouteTableAssociationId' \
   --output text)
 
-echo "=============================="
-echo "Terminating EC2 instances..."
+
+
+echo "Terminating EC2 instances"
 aws ec2 terminate-instances --instance-ids $PUBLIC_EC2_ID $PRIVATE_EC2_ID
 aws ec2 wait instance-terminated --instance-ids $PUBLIC_EC2_ID $PRIVATE_EC2_ID
 
-echo "Deleting NAT Gateway..."
+echo "Deleting NAT Gateway"
 aws ec2 delete-nat-gateway --nat-gateway-id $NAT_GW_ID
 aws ec2 wait nat-gateway-deleted --nat-gateway-ids $NAT_GW_ID
 
-echo "Releasing Elastic IP..."
+echo "Releasing Elastic IP"
 aws ec2 release-address --allocation-id $EIP_ID
 
-echo "Detaching and deleting IGW..."
+echo "Detaching and deleting IGW"
 aws ec2 detach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $VPC_ID
 aws ec2 delete-internet-gateway --internet-gateway-id $IGW_ID
 
-echo "Disassociating and deleting route tables..."
+echo "Disassociating and deleting route tables"
 aws ec2 disassociate-route-table --association-id $PUBLIC_RT_ASSOC
 aws ec2 disassociate-route-table --association-id $PRIVATE_RT_ASSOC
 aws ec2 delete-route-table --route-table-id $PUBLIC_RT_ID
 aws ec2 delete-route-table --route-table-id $PRIVATE_RT_ID
 
-echo "Deleting subnets..."
+echo "Deleting subnets"
 aws ec2 delete-subnet --subnet-id $PUBLIC_SUBNET_ID
 aws ec2 delete-subnet --subnet-id $PRIVATE_SUBNET_ID
 
-echo "Deleting security groups..."
+echo "Deleting security groups"
 aws ec2 delete-security-group --group-id $PRIVATE_SG_ID
 aws ec2 delete-security-group --group-id $PUBLIC_SG_ID
 
-echo "Deleting VPC..."
+echo "Deleting VPC"
 aws ec2 delete-vpc --vpc-id $VPC_ID
 
 echo "=============================="
